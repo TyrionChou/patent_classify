@@ -1,4 +1,4 @@
-# patent_classifyii
+# patent_classify
 # 小组成员：
     周航
     张尚乾
