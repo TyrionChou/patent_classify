@@ -6,6 +6,8 @@ import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.InputStreamReader;
 import java.io.Writer;
+import java.util.HashSet;
+import java.util.Set;
 
 
 public class RWFile {
@@ -15,7 +17,7 @@ public class RWFile {
 //	}
 	
 	//读取文件信息，并返回
-	public static String fileReader(String filePath){
+	public static String readFileContent(String filePath){
 		String content = "";
 		try {
 			File file = new File(filePath);
@@ -35,9 +37,29 @@ public class RWFile {
 		return content;
 	}
 	
-	
+	//读取文件信息，并返回
+	public static HashSet<String> readTableContent(String filePath){
+		String content = "";
+		HashSet<String> wordSet = new HashSet<String>();
+		try {
+			File file = new File(filePath);
+			FileInputStream in = new FileInputStream(file);
+			InputStreamReader read = new InputStreamReader(in);
+			BufferedReader bufferedReader = new BufferedReader(read);
+			String lineTxt = null; 
+			while((lineTxt = bufferedReader.readLine()) != null){ 
+				wordSet.add(lineTxt);
+	          } 
+			bufferedReader.close();
+			read.close();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return wordSet;
+	}
 	//写入文件信息
-	public static void fileWriter(String filePath ,String content){
+	public static void writeFileContent(String filePath ,String content){
 		File file = new File(filePath);
 		try{
 			createFile(file);
