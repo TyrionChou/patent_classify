@@ -1,4 +1,5 @@
 package cn.bistu.icdd.zh.procprocessor;
+import java.util.ArrayList;
 import java.util.HashSet;
 
 import cn.bistu.icdd.zh.util.RWFile;
@@ -10,53 +11,52 @@ import cn.bistu.icdd.zh.util.RWFile;
 
 public class WordsFilter {
 	
-	public static String process(String content, String filePath){
+	static HashSet<String> stopWordSet = new HashSet<String>();
+	static ArrayList<ArrayList<String>> normalizeWordSet = new ArrayList<ArrayList<String>>();
+	
+	public static void stopWordsFilterInit(String tablePath){
+		stopWordSet = RWFile.readLineOneTableContent(tablePath);
+	}
+	
+	public static void normailzeFilterInit(String tablePath){
+		normalizeWordSet = RWFile.readLineMultipleTableContent(tablePath);
+	}
+	
+	public static String process(String content){
 		content = chineseFilter(content);
-		content = stopWordsFilter(content, filePath);
+		content = stopWordsFilter(content);
+//		content = normalizeFilter(content);
 		return content;
 	}
+	
+//	//去非中文字符
+//	public static String chineseFilter(String content){
+//		String[] segmentWords = content.split(" ");
+//		for(int i =0 ; i < segmentWords.length; i++){
+//			if(!isChinese(segmentWords[i])){
+//				segmentWords[i] = "";
+//			}
+//		}
+//		content = "";
+//		for(int i = 0; i < segmentWords.length; i++ ){
+//			if(segmentWords[i] != ""){
+//				content += segmentWords[i] + " ";
+//			}
+//		}
+//		return content;
+//	}
 	
 	//去非中文字符
-	public static String chineseFilter(String content){
-		String[] segmentWords = content.split(" ");
-		for(int i =0 ; i < segmentWords.length; i++){
-			if(!isChinese(segmentWords[i])){
-				segmentWords[i] = "";
-			}
+		public static String chineseFilter(String content){
+			char[] contentArray = content.toCharArray();
+			for (int i = 0; i < contentArray.length; i++) {
+	            if (!isChinese(contentArray[i])){
+	            	contentArray[i] = 0x20;
+	            }
+	        }
+			content = String.valueOf(contentArray);
+			return content;
 		}
-		content = "";
-		for(int i = 0; i < segmentWords.length; i++ ){
-			if(segmentWords[i] != ""){
-				content += segmentWords[i] + " ";
-			}
-		}
-		return content;
-	}
-	
-	//去停用词
-	public static String stopWordsFilter(String content, String filePath){
-		HashSet<String> stopWordSet = new HashSet<String>();
-		stopWordSet = RWFile.readTableContent(filePath);
-		
-		String[] segmentWords = content.split(" ");
-		
-		for(int i = 0; i < segmentWords.length; i++ ){
-			for(String segmentWord : stopWordSet){
-				if(segmentWords[i].contains(segmentWord)){
-					segmentWords[i] = "";
-				}
-			}
-		}
-		content = "";
-		for(int i = 0; i < segmentWords.length; i++ ){
-			if(segmentWords[i] != ""){
-				content += segmentWords[i] + " ";
-			}
-		}
-		return content;
-	}
-	
-
 	// 判断一个字符是否是中文
     public static boolean isChinese(char c) {
         return c >= 0x4E00 &&  c <= 0x9FA5;// 根据字节码判断
@@ -69,4 +69,49 @@ public class WordsFilter {
         }
         return false;
     }
+	
+	
+	
+	//去停用词
+	public static String stopWordsFilter(String content){
+
+		
+		String[] segmentWords = content.split(" ");
+		
+		for(int i = 0; i < segmentWords.length; i++ ){
+			if(stopWordSet.contains(segmentWords[i])){
+				segmentWords[i] = "";
+			}
+		}
+		content = "";
+		for(int i = 0; i < segmentWords.length; i++ ){
+			if(segmentWords[i] != ""){
+				content += segmentWords[i] + " ";
+			}
+		}
+		return content;
+	}
+	
+	public static String normalizeFilter(String content){
+
+		
+		String[] segmentWords = content.split(" ");
+		
+		for(int i = 0; i < segmentWords.length; i++ ){
+			for(ArrayList<String> oneLineWordSet : normalizeWordSet){
+				if(oneLineWordSet.contains(segmentWords[i])){
+					segmentWords[i] = oneLineWordSet.get(0);
+					break;
+				}
+			}
+		}
+		content = "";
+		for(int i = 0; i < segmentWords.length; i++ ){
+			if(segmentWords[i] != ""){
+				content += segmentWords[i] + " ";
+			}
+		}
+		return content;
+	}
+
 }

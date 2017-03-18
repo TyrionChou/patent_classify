@@ -6,8 +6,8 @@ import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.InputStreamReader;
 import java.io.Writer;
+import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Set;
 
 
 public class RWFile {
@@ -26,7 +26,7 @@ public class RWFile {
 			BufferedReader bufferedReader = new BufferedReader(read);
 			String lineTxt = null; 
 			while((lineTxt = bufferedReader.readLine()) != null){ 
-	            content += lineTxt;
+	            content += lineTxt+" ";
 	          } 
 			bufferedReader.close();
 			read.close();
@@ -37,18 +37,44 @@ public class RWFile {
 		return content;
 	}
 	
-	//读取文件信息，并返回
-	public static HashSet<String> readTableContent(String filePath){
-		String content = "";
+	//读取一行只有一个词的表信息，并返回
+	public static HashSet<String> readLineOneTableContent(String tablePath){
 		HashSet<String> wordSet = new HashSet<String>();
 		try {
-			File file = new File(filePath);
+			File file = new File(tablePath);
 			FileInputStream in = new FileInputStream(file);
 			InputStreamReader read = new InputStreamReader(in);
 			BufferedReader bufferedReader = new BufferedReader(read);
 			String lineTxt = null; 
 			while((lineTxt = bufferedReader.readLine()) != null){ 
 				wordSet.add(lineTxt);
+	          } 
+			bufferedReader.close();
+			read.close();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return wordSet;
+	}
+	
+	//读取一行有多个词的表信息，并返回
+	public static ArrayList<ArrayList<String>> readLineMultipleTableContent(String filePath){
+		ArrayList<ArrayList<String>> wordSet = new ArrayList<ArrayList<String>>();
+		try {
+			File file = new File(filePath);
+			FileInputStream in = new FileInputStream(file);
+			InputStreamReader read = new InputStreamReader(in);
+			BufferedReader bufferedReader = new BufferedReader(read);
+			String lineTxt = null; 
+			String[] lineWordSet;
+			while((lineTxt = bufferedReader.readLine()) != null){
+				ArrayList<String> oneLineWordSet = new ArrayList<String>();
+				lineWordSet = lineTxt.split(" ");
+				for(int i = 0; i < lineWordSet.length; i++){
+					oneLineWordSet.add(lineWordSet[i]);
+				}
+				wordSet.add(oneLineWordSet);
 	          } 
 			bufferedReader.close();
 			read.close();

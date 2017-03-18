@@ -55,7 +55,9 @@ public class NlpirSegment {
 	public static String process(String content){
 		String nativeBytes = "";
 		try {
-			nativeBytes = CLibrary.Instance.NLPIR_ParagraphProcess(content, 0);	
+			nativeBytes = CLibrary.Instance.NLPIR_ParagraphProcess(content, 0);
+			//将多个空格变为一个空格
+			nativeBytes = nativeBytes.replaceAll("\\s+", " ");
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
