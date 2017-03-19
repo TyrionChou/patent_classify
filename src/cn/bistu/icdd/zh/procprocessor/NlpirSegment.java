@@ -1,6 +1,8 @@
 package cn.bistu.icdd.zh.procprocessor;
 
 
+
+
 import com.sun.jna.Library;
 import com.sun.jna.Native;
 
@@ -20,7 +22,23 @@ public class NlpirSegment {
 		// printf函数声明
 		public int NLPIR_Init(byte[] sDataPath, int encoding,
 				byte[] sLicenceCode);
+		
+		public int NLPIR_AddUserWord(String sWord);
+		// 导入用户自定义词典：自定义词典路径，bOverwrite=true表示替代当前的自定义词典，false表示添加到当前自定义词典后
+		public int NLPIR_ImportUserDict(String sFilename, boolean bOverwrite);  
 
+		public boolean NLPIR_NWI_Start();
+		
+		public int NLPIR_NWI_AddFile(String sFilename);
+		
+		public String NLPIR_NWI_GetResult(boolean bWeightOut);//输出新词识别结果
+		
+		public int  NLPIR_NWI_Result2UserDict();
+		
+		public boolean NLPIR_NWI_Complete();
+		
+		public int NLPIR_SaveTheUsrDic();
+		
 		public String NLPIR_ParagraphProcess(String sSrc, int bPOSTagged);
 
 
@@ -46,11 +64,53 @@ public class NlpirSegment {
 			e.printStackTrace();
 		}	
 	}
+	
 	//释放Instance
 	public static void instanceExit(){
 		CLibrary.Instance.NLPIR_Exit();
 	}
 	
+	//添加用户词典
+	public static void userWordsImport(String sWord){
+//		System.out.println(CLibrary.Instance.NLPIR_ImportUserDict(sFilename, false));
+		CLibrary.Instance.NLPIR_AddUserWord(sWord);
+	}
+	
+	//添加用户词典，返回用户词典中的词数量
+	public static void userDictImport(String sFilename){
+//		System.out.println(CLibrary.Instance.NLPIR_ImportUserDict(sFilename, false));
+		CLibrary.Instance.NLPIR_ImportUserDict(sFilename, false);
+	}
+	//开始添加用户词典，返回是否成功
+	public static void userDictAddStart(){
+//		System.out.println(CLibrary.Instance.NLPIR_NWI_Start());
+		CLibrary.Instance.NLPIR_NWI_Start();
+	}
+	//检测文章中的新词，返回是否成功
+	public static void userDictAddFile(String sFilename){
+//		System.out.println(CLibrary.Instance.NLPIR_NWI_AddFile(sFilename));
+		CLibrary.Instance.NLPIR_NWI_AddFile(sFilename);
+	}
+	
+	//检测文章中的新词，返回新词结果
+	public static String newWordsGetResult(){
+		return CLibrary.Instance.NLPIR_NWI_GetResult(false);
+	}
+	
+	//结束添加用户词典，返回是否成功
+	public static void userDictAddComplete(){
+//		System.out.println(CLibrary.Instance.NLPIR_NWI_Complete());
+		CLibrary.Instance.NLPIR_NWI_Complete();
+	}
+	
+//	//检测文章中的新词，返回新词个数
+//	public static void result2UserDict(){
+//		System.out.println(CLibrary.Instance.NLPIR_NWI_Result2UserDict());
+//	}
+//	//结束添加用户词典，返回是否成功
+//	public static void userDictSave(){
+//		System.out.println(CLibrary.Instance.NLPIR_SaveTheUsrDic());
+//	}
 	//进行分词
 	public static String process(String content){
 		String nativeBytes = "";

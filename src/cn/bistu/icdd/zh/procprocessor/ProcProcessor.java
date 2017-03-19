@@ -1,6 +1,7 @@
 package cn.bistu.icdd.zh.procprocessor;
 
 import java.io.File;
+import java.util.HashSet;
 
 import cn.bistu.icdd.zh.util.RWFile;
 
@@ -11,32 +12,83 @@ import cn.bistu.icdd.zh.util.RWFile;
 public class ProcProcessor {
 	
 	public static void main(String[] args){
-		procProcessInit("C:/program/GitHub/训练数据", "./source/stopwords.txt","./source/synonym.txt");
+		procProcessInit("C:/program/GitHub/训练数据", "./source/userdict.txt","./source/stopwords.txt","./source/synonym.txt");
 		procProcess();
+		System.out.println("Finish");
 	}
 	//输入所在文件夹名称
 	final static String indirName = "训练数据";
 	//输出所在文件夹名称
 	final static String outdirName = "预处理数据";
 	
+	//数据路径
 	static String dataDirPath = "";
-	static String stopWordsTablePath = "";
-	static String synonymTablePath = "";
+	//用户词典路径
+	static String userWordsDictPath = "";
+	//停用词路径
+	static String stopWordsDictPath = "";
+	//归一化词路径
+	static String synonymDictPath = "";
 	
+	static String newUserWords = "";
 	
-	
-	public static void procProcessInit(String filePath, String stopWordsPath, String synonymPath){
+	public static void procProcessInit(String filePath, String userDictPath, String stopWordsPath, String synonymPath){
 		dataDirPath = filePath;
-		stopWordsTablePath = stopWordsPath;
-		synonymTablePath = synonymPath;
+		userWordsDictPath = userDictPath;
+		stopWordsDictPath = stopWordsPath;
+		synonymDictPath = synonymPath;
 	}
 	public static void procProcess(){
+		
 		NlpirSegment.instanceInit();
-		WordsFilter.stopWordsFilterInit(stopWordsTablePath);
-//		WordsFilter.normailzeFilterInit(synonymPath);
+		userDictInit(userWordsDictPath);
+		WordsFilter.stopWordsFilterInit(stopWordsDictPath);
+//		WordsFilter.normailzeFilterInit(synonymDictPath);
 		fileProcess(dataDirPath);
 		NlpirSegment.instanceExit();
 	}
+	
+	
+	//加载用户词典
+	public static void userDictInit(String userDictPath){
+		File file = new File(userDictPath);
+		HashSet<String> wordSet = new HashSet<String>();
+		try {
+			//用户词典不存在
+			if(!file.exists()){			
+			
+				userDictProcess(dataDirPath);
+				
+			
+				RWFile.writetableContent(userDictPath, newUserWords);
+//					NlpirSegment.result2UserDict();
+//					NlpirSegment.userDictSave();	
+			}
+			wordSet = RWFile.readLineOneTableContent(userDictPath);
+			for(String str : wordSet){
+				NlpirSegment.userWordsImport(str);
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+		//递归读取文件夹下的文件，进行添加新词
+		public static void userDictProcess(String filePath){
+			File file = new File(filePath);
+			if(!file.isDirectory()){
+				NlpirSegment.userDictAddStart();
+				NlpirSegment.userDictAddFile(filePath);
+				NlpirSegment.userDictAddComplete();
+				newUserWords += NlpirSegment.newWordsGetResult();
+			}else if(file.isDirectory()){
+				String[] fileList = file.list();
+				for(int i = 0; i < fileList.length ; i++){
+					userDictProcess(filePath + "/" + fileList[i]);
+				}
+			}
+		}	
 	
 	//递归读取文件夹下的文件，进行文本预处理后，输出到相应的文件夹下
 	public static void fileProcess(String filePath){

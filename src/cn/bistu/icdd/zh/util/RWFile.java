@@ -1,6 +1,7 @@
 package cn.bistu.icdd.zh.util;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
@@ -91,6 +92,25 @@ public class RWFile {
 			createFile(file);
 			Writer out = new FileWriter(file);
 			out.write(content);
+			out.close();
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+	
+	//写入文件信息
+	public static void writetableContent(String filePath ,String content){
+		File file = new File(filePath);
+		try{
+			createFile(file);
+			String[] newWords = content.split("#");
+			Writer out = new FileWriter(file);
+			BufferedWriter bw = new BufferedWriter(out);
+			for(int i = 0; i < newWords.length; i++){
+				bw.write(newWords[i]);
+				bw.newLine();
+			}
+			bw.close();
 			out.close();
 		}catch(Exception e){
 			e.printStackTrace();
