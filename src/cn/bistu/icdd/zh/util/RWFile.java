@@ -13,19 +13,17 @@ import java.util.HashSet;
 
 public class RWFile {
 	
-//	public static void main(String[] args){
-//		fileReader("C:/paper/patentclassifier/patentproc/C/C01B_CN104140078_一种水制氢的方法及其水燃料电池.txt");
-//	}
-	
-	//读取文件信息，并返回
+	//读取文件信息，并返回字符串
 	public static String readFileContent(String filePath){
 		String content = "";
 		try {
 			File file = new File(filePath);
 			FileInputStream in = new FileInputStream(file);
 			InputStreamReader read = new InputStreamReader(in);
+			//方便将文件的内容以字符串的形式读取
 			BufferedReader bufferedReader = new BufferedReader(read);
 			String lineTxt = null; 
+			//按行读取内容
 			while((lineTxt = bufferedReader.readLine()) != null){ 
 	            content += lineTxt.trim()+" ";
 	          } 
@@ -38,7 +36,7 @@ public class RWFile {
 		return content;
 	}
 	
-	//读取一行只有一个词的表信息，并返回
+	//读取词表信息，词表信息的内部格式是一行只有一个词，用于读停用词典
 	public static HashSet<String> readLineOneTableContent(String tablePath){
 		HashSet<String> wordSet = new HashSet<String>();
 		try {
@@ -59,7 +57,7 @@ public class RWFile {
 		return wordSet;
 	}
 	
-	//读取一行有多个词的表信息，并返回
+	//读取词表信息，词表信息的内部格式是一行包含多个词，用于读归一化词典
 	public static ArrayList<ArrayList<String>> readLineMultipleTableContent(String filePath){
 		ArrayList<ArrayList<String>> wordSet = new ArrayList<ArrayList<String>>();
 		try {
@@ -72,9 +70,11 @@ public class RWFile {
 			while((lineTxt = bufferedReader.readLine()) != null){
 				ArrayList<String> oneLineWordSet = new ArrayList<String>();
 				lineWordSet = lineTxt.split(" ");
+				//将每一行的内容存入一个ArrayList<String>
 				for(int i = 0; i < lineWordSet.length; i++){
 					oneLineWordSet.add(lineWordSet[i]);
 				}
+				//再讲ArrayList<String>存入ArrayList<ArrayList<String>>
 				wordSet.add(oneLineWordSet);
 	          } 
 			bufferedReader.close();
@@ -85,10 +85,12 @@ public class RWFile {
 		}
 		return wordSet;
 	}
+	
 	//写入文件信息
 	public static void writeFileContent(String filePath ,String content){
 		File file = new File(filePath);
 		try{
+			//判断是否文件是否存在，如果有，则返回，如果没有，则创建文件。
 			createFile(file);
 			Writer out = new FileWriter(file);
 			out.write(content);
@@ -98,16 +100,18 @@ public class RWFile {
 		}
 	}
 	
-	
-
-	//写入新词表
+	//根据分词工具返回的新词，写入用户词典文件
 	public static void writetableContent(String filePath ,String content){
 		File file = new File(filePath);
 		try{
+			//判断是否文件是否存在，如果有，则返回，如果没有，则创建文件。
 			createFile(file);
+			//新词是以"#"进行分割
 			String[] newWords = content.split("#");
+			
 			Writer out = new FileWriter(file);
 			BufferedWriter bw = new BufferedWriter(out);
+			//每个词写一行
 			for(int i = 0; i < newWords.length; i++){
 				bw.write(newWords[i]);
 				bw.newLine();
@@ -118,11 +122,14 @@ public class RWFile {
 			e.printStackTrace();
 		}
 	}
-	//写入特征表
+	
+	//根据特征词计算后，将选取的特征词信息写入特征词表
 	public static void writeLineMultipleContent(String filePath ,String content){
 		File file = new File(filePath);
 		try{
+			//判断是否文件是否存在，如果有，则返回，如果没有，则创建文件。
 			createFile(file);
+			//追加写入
 			Writer out = new FileWriter(file,true);
 			BufferedWriter bw = new BufferedWriter(out);
 			bw.append(content);

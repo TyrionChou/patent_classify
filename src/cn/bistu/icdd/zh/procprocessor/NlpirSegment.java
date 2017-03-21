@@ -16,33 +16,33 @@ public class NlpirSegment {
 		CLibrary Instance = (CLibrary) Native.loadLibrary(
 				"./source/NLPIR", CLibrary.class);
 
-		// printf函数声明
+		//初始化分词工具
 		public int NLPIR_Init(byte[] sDataPath, int encoding,
 				byte[] sLicenceCode);
 		
+		//将词添加到用户词典
 		public int NLPIR_AddUserWord(String sWord);
 		
-		// 导入用户自定义词典：自定义词典路径，bOverwrite=true表示替代当前的自定义词典，false表示添加到当前自定义词典后
-		public int NLPIR_ImportUserDict(String sFilename, boolean bOverwrite);  
-
+		//开启检测新词
 		public boolean NLPIR_NWI_Start();
 		
+		//检测文章中的新词
 		public int NLPIR_NWI_AddFile(String sFilename);
 		
+		//返回文章中的新词
 		public String NLPIR_NWI_GetResult(boolean bWeightOut);//输出新词识别结果
 		
-		public int  NLPIR_NWI_Result2UserDict();
-		
+		//结束检测新词
 		public boolean NLPIR_NWI_Complete();
 		
-		public int NLPIR_SaveTheUsrDic();
-		
+		//分词
 		public String NLPIR_ParagraphProcess(String sSrc, int bPOSTagged);
 
-
+		//析构分词工具
 		public void NLPIR_Exit();
 	}
-	//初始化Instance
+	
+	//初始化分词工具
 	public static void instanceInit(){
 		//相对路径
 		String argu = "";
@@ -63,25 +63,22 @@ public class NlpirSegment {
 		}	
 	}
 	
-	//释放Instance
+	//析构分词工具
 	public static void instanceExit(){
 		CLibrary.Instance.NLPIR_Exit();
 	}
 	
 	//添加用户词典
-	public static void userWordsImport(String sWord){
+	public static void userWordsAdd(String sWord){
 		CLibrary.Instance.NLPIR_AddUserWord(sWord);
 	}
 	
-	//添加用户词典，返回用户词典中的词数量
-	public static void userDictImport(String sFilename){
-		CLibrary.Instance.NLPIR_ImportUserDict(sFilename, false);
-	}
-	//开始添加用户词典，返回是否成功
+	//开启检测新词
 	public static void userDictAddStart(){
 		CLibrary.Instance.NLPIR_NWI_Start();
 	}
-	//检测文章中的新词，返回是否成功
+	
+	//检测文章中的新词
 	public static void userDictAddFile(String sFilename){
 		CLibrary.Instance.NLPIR_NWI_AddFile(sFilename);
 	}
