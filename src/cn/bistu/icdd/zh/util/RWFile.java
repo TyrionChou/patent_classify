@@ -27,7 +27,7 @@ public class RWFile {
 			BufferedReader bufferedReader = new BufferedReader(read);
 			String lineTxt = null; 
 			while((lineTxt = bufferedReader.readLine()) != null){ 
-	            content += lineTxt+" ";
+	            content += lineTxt.trim()+" ";
 	          } 
 			bufferedReader.close();
 			read.close();
@@ -98,7 +98,9 @@ public class RWFile {
 		}
 	}
 	
-	//写入文件信息
+	
+
+	//写入新词表
 	public static void writetableContent(String filePath ,String content){
 		File file = new File(filePath);
 		try{
@@ -116,11 +118,26 @@ public class RWFile {
 			e.printStackTrace();
 		}
 	}
+	//写入特征表
+	public static void writeLineMultipleContent(String filePath ,String content){
+		File file = new File(filePath);
+		try{
+			createFile(file);
+			Writer out = new FileWriter(file,true);
+			BufferedWriter bw = new BufferedWriter(out);
+			bw.append(content);
+			bw.newLine();
+			bw.close();
+			out.close();
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
 	
 	// 创建单个文件
 	public static boolean createFile(File file) {
 		if (file.exists()) {// 判断文件是否存在
-			System.out.println("目标文件已存在" + file.getPath());
+//			System.out.println("目标文件已存在" + file.getPath());
 			return false;
 		}
 		if (file.getPath().endsWith(File.separator)) {// 判断文件是否为目录

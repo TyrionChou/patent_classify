@@ -29,7 +29,7 @@ public class ProcProcessor {
 	static String stopWordsDictPath = "";
 	//归一化词路径
 	static String synonymDictPath = "";
-	
+	//记录所有文章中的新词
 	static String newUserWords = "";
 	
 	public static void procProcessInit(String filePath, String userDictPath, String stopWordsPath, String synonymPath){
@@ -55,11 +55,8 @@ public class ProcProcessor {
 		HashSet<String> wordSet = new HashSet<String>();
 		try {
 			//用户词典不存在
-			if(!file.exists()){			
-			
+			if(!file.exists()){					
 				userDictProcess(dataDirPath);
-				
-			
 				RWFile.writetableContent(userDictPath, newUserWords);
 //					NlpirSegment.result2UserDict();
 //					NlpirSegment.userDictSave();	
@@ -74,21 +71,21 @@ public class ProcProcessor {
 		}
 	}
 	
-		//递归读取文件夹下的文件，进行添加新词
-		public static void userDictProcess(String filePath){
-			File file = new File(filePath);
-			if(!file.isDirectory()){
-				NlpirSegment.userDictAddStart();
-				NlpirSegment.userDictAddFile(filePath);
-				NlpirSegment.userDictAddComplete();
-				newUserWords += NlpirSegment.newWordsGetResult();
-			}else if(file.isDirectory()){
-				String[] fileList = file.list();
-				for(int i = 0; i < fileList.length ; i++){
-					userDictProcess(filePath + "/" + fileList[i]);
-				}
+	//递归读取文件夹下的文件，进行添加新词
+	public static void userDictProcess(String filePath){
+		File file = new File(filePath);
+		if(!file.isDirectory()){
+			NlpirSegment.userDictAddStart();
+			NlpirSegment.userDictAddFile(filePath);
+			NlpirSegment.userDictAddComplete();
+			newUserWords += NlpirSegment.newWordsGetResult();
+		}else if(file.isDirectory()){
+			String[] fileList = file.list();
+			for(int i = 0; i < fileList.length ; i++){
+				userDictProcess(filePath + "/" + fileList[i]);
 			}
-		}	
+		}
+	}	
 	
 	//递归读取文件夹下的文件，进行文本预处理后，输出到相应的文件夹下
 	public static void fileProcess(String filePath){
@@ -113,26 +110,6 @@ public class ProcProcessor {
 	
 	//计算输出文件的路径
 	public static String countNewFilePath(String filePath){
-//		String[] initPath = dataDirPath.split("/");
-//		String[] nowFilePath = filePath.split("/");
-//		int distance = nowFilePath.length - initPath.length;
-//		
-//		//保留两路径不一样的地方
-//		String constantPath = "";
-//		for(int i = nowFilePath.length - distance ; i < nowFilePath.length ; i++){
-//			constantPath += nowFilePath[i] + "/";
-//		}
-//		//substring截取字符串不包含endIndex
-//		constantPath = constantPath.substring(0,constantPath.length()-1);
-//		
-//		String newFilePath = "";
-//		//去掉训练数据
-//		for(int i = 0; i < initPath.length - 1 ; i++){
-//			newFilePath += initPath[i] + "/";
-//		}
-//		
-//		newFilePath += dirName + "/" + constantPath;
-//		System.out.println(newFilePath);
 		
 		String[] path = filePath.split("/");
 		for(int i = 0; i < path.length; i++){

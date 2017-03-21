@@ -1,8 +1,5 @@
 package cn.bistu.icdd.zh.procprocessor;
 
-
-
-
 import com.sun.jna.Library;
 import com.sun.jna.Native;
 
@@ -24,6 +21,7 @@ public class NlpirSegment {
 				byte[] sLicenceCode);
 		
 		public int NLPIR_AddUserWord(String sWord);
+		
 		// 导入用户自定义词典：自定义词典路径，bOverwrite=true表示替代当前的自定义词典，false表示添加到当前自定义词典后
 		public int NLPIR_ImportUserDict(String sFilename, boolean bOverwrite);  
 
@@ -72,23 +70,19 @@ public class NlpirSegment {
 	
 	//添加用户词典
 	public static void userWordsImport(String sWord){
-//		System.out.println(CLibrary.Instance.NLPIR_ImportUserDict(sFilename, false));
 		CLibrary.Instance.NLPIR_AddUserWord(sWord);
 	}
 	
 	//添加用户词典，返回用户词典中的词数量
 	public static void userDictImport(String sFilename){
-//		System.out.println(CLibrary.Instance.NLPIR_ImportUserDict(sFilename, false));
 		CLibrary.Instance.NLPIR_ImportUserDict(sFilename, false);
 	}
 	//开始添加用户词典，返回是否成功
 	public static void userDictAddStart(){
-//		System.out.println(CLibrary.Instance.NLPIR_NWI_Start());
 		CLibrary.Instance.NLPIR_NWI_Start();
 	}
 	//检测文章中的新词，返回是否成功
 	public static void userDictAddFile(String sFilename){
-//		System.out.println(CLibrary.Instance.NLPIR_NWI_AddFile(sFilename));
 		CLibrary.Instance.NLPIR_NWI_AddFile(sFilename);
 	}
 	
@@ -99,18 +93,9 @@ public class NlpirSegment {
 	
 	//结束添加用户词典，返回是否成功
 	public static void userDictAddComplete(){
-//		System.out.println(CLibrary.Instance.NLPIR_NWI_Complete());
 		CLibrary.Instance.NLPIR_NWI_Complete();
 	}
 	
-//	//检测文章中的新词，返回新词个数
-//	public static void result2UserDict(){
-//		System.out.println(CLibrary.Instance.NLPIR_NWI_Result2UserDict());
-//	}
-//	//结束添加用户词典，返回是否成功
-//	public static void userDictSave(){
-//		System.out.println(CLibrary.Instance.NLPIR_SaveTheUsrDic());
-//	}
 	//进行分词
 	public static String process(String content){
 		String nativeBytes = "";

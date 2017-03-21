@@ -47,16 +47,16 @@ public class WordsFilter {
 //	}
 	
 	//去非中文字符
-		public static String chineseFilter(String content){
-			char[] contentArray = content.toCharArray();
-			for (int i = 0; i < contentArray.length; i++) {
-	            if (!isChinese(contentArray[i])){
-	            	contentArray[i] = 0x20;
-	            }
-	        }
-			content = String.valueOf(contentArray);
-			return content;
-		}
+	public static String chineseFilter(String content){
+		char[] contentArray = content.toCharArray();
+		for (int i = 0; i < contentArray.length; i++) {
+            if (!isChinese(contentArray[i])){
+            	contentArray[i] = 0x20;
+            }
+        }
+		content = String.valueOf(contentArray);
+		return content;
+	}
 	// 判断一个字符是否是中文
     public static boolean isChinese(char c) {
         return c >= 0x4E00 &&  c <= 0x9FA5;// 根据字节码判断
@@ -92,6 +92,7 @@ public class WordsFilter {
 		return content;
 	}
 	
+	//归一化
 	public static String normalizeFilter(String content){
 
 		
