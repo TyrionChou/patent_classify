@@ -3,8 +3,6 @@ package cn.bistu.icdd.zh.selectfeatures;
 import java.io.File;
 import java.util.HashMap;
 import java.util.HashSet;
-
-
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -37,6 +35,7 @@ public class SelectFeatures {
 		selectFeaturesInit();
 		countWords(filePath);
 		selectFeatures(filePath);
+		System.out.println("Finish");
 	}
 	
 	//Entropy类初始化一些静态参数
@@ -57,16 +56,16 @@ public class SelectFeatures {
 		//计算类别初始熵，保留四位小数
 		Entropy.countClassEntropy();
 	}
-	//递归将所有文章中出现过的单词放入HashMap<String,Entropy> words中
+	//递归将所有文本中出现过的单词放入HashMap<String,Entropy> words中
 	public static void countWords(String filePath){
 		File file = new File(filePath);
 		if(!file.isDirectory()){
-			//读文档内容
+			//读文本内容
 			String content = RWFile.readFileContent(filePath);
-			//分解文章内容
+			//分解文本内容
 			String[] wordsContent = content.split(" ");
 			//循环判断是否words中含有单词，有，则跳过，没有，则加入words
-			for(int i =0 ; i < wordsContent.length; i++){
+			for(int i = 0; i < wordsContent.length; i++){
 				if(!words.containsKey(wordsContent[i])){
 					Entropy entropy = new Entropy();
 					entropy.setWordName(wordsContent[i]);
@@ -84,7 +83,7 @@ public class SelectFeatures {
 	
 	//计算每个词的信息增益
 	public static void selectFeatures(String filePath){
-		//遍历所有文章，在文章中出现且在words中出现的词，在相应的类别文章数中加1
+		//遍历所有文本，在文章中出现且在words中出现的词，在相应的类别文章数中加1
 		countWordFrequency(filePath);
 		//循环每个词计算信息增益
 		Iterator<Entry<String, Entropy>> iter = words.entrySet().iterator();
@@ -101,30 +100,32 @@ public class SelectFeatures {
 			entropy.countWordNotOccurredCProbability();
 			//计算信息增益值
 			entropy.countIG();
+//			RWFile.writeLineMultipleContent(outFilePath, entropy.getWordName() + " " 
+//					+ entropy.getTotalOccurredNum() + " " +entropy.getIG());
 			//信息增益大于0.008的词输出
-			if(entropy.getIG() > 0.008){
+			if(entropy.getIG() > 0.0087){
 				RWFile.writeLineMultipleContent(outFilePath, entropy.getWordName() + " " 
 						+ entropy.getTotalOccurredNum() + " " +entropy.getIG());
 			}
 		}
 	}
 	
-	//遍历所有文章，在文章中出现且在words中出现的词，在相应的类别文章数中加1
+	//遍历所有文章，在文本中出现且在words中出现的词，在相应的类别文章数中加1
 	public static void countWordFrequency(String filePath){
 		File file = new File(filePath);
 		if(!file.isDirectory()){
-			//提取文章类别
+			//提取文本类别
 			String fileType = filePath.split("/")[filePath.split("/").length - 1].substring(0, 1);
 			String content = RWFile.readFileContent(filePath);
 			String[] contentWords = content.split(" ");
 			word.clear();
-			//记录文章中出现的词
+			//记录文本中出现的词
 			for(int i = 0; i < contentWords.length; i++){
 				if(!word.contains(contentWords[i])){
 					word.add(contentWords[i]);
 				}
 			}
-			//遍历每一个文章中出现的词，与words词表进行对比，如果有，则在words单词相应的类别文章数中加1
+			//遍历每一个文本中出现的词，与words词表进行对比，如果有，则在words单词相应的类别文章数中加1
 			for(String str : word){	
 				if(words.containsKey(str)){
 					Entropy entropy = words.get(str);
