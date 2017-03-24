@@ -171,7 +171,7 @@ public class TFIDF {
 	//计算每个特征词TF/IDF的值
 	public void countTfIdf() {
 		for(int i = 0;i < TFIDF.featuresNum; i++){
-			double num = tfIdfUp.get(i)/tfIdfDown;
+			double num = tfIdfUp.get(i)/(tfIdfDown + 0.00000001);
 			BigDecimal bd = new BigDecimal(num);
 			num = bd.setScale(8, BigDecimal.ROUND_HALF_UP).doubleValue(); 
 			tfIdf.set(i, num);

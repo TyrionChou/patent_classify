@@ -16,7 +16,7 @@ import cn.bistu.icdd.zh.util.Entropy;
 public class SelectFeatures {
 	
 	//输入待数据路径
-	final static String filePath = "C:/program/GitHub/预处理数据";
+	final static String filePath = "C:/program/GitHub/训练处理数据";
 	//输出特征值路径
 	final static String outFilePath = "./source/features.txt";
 	//分类的类别数
@@ -82,9 +82,12 @@ public class SelectFeatures {
 	
 	
 	//计算每个词的信息增益
-	public static void selectFeatures(String filePath){
+	public static void selectFeatures(String filePath) {
 		//遍历所有文本，在文章中出现且在words中出现的词，在相应的类别文章数中加1
 		countWordFrequency(filePath);
+		//特征文件存在现将其删除
+		File file = new File(outFilePath);
+		file.delete();
 		//循环每个词计算信息增益
 		Iterator<Entry<String, Entropy>> iter = words.entrySet().iterator();
 		while (iter.hasNext()) {
@@ -103,7 +106,7 @@ public class SelectFeatures {
 //			RWFile.writeLineMultipleContent(outFilePath, entropy.getWordName() + " " 
 //					+ entropy.getTotalOccurredNum() + " " +entropy.getIG());
 			//信息增益大于0.008的词输出
-			if(entropy.getIG() > 0.0087){
+			if(entropy.getIG() > 0.009){
 				RWFile.writeLineMultipleContent(outFilePath, entropy.getWordName() + " " 
 						+ entropy.getTotalOccurredNum() + " " +entropy.getIG());
 			}

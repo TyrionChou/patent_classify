@@ -25,7 +25,7 @@ public class RWFile {
 			String lineTxt = null; 
 			//按行读取内容
 			while((lineTxt = bufferedReader.readLine()) != null){ 
-	            content += lineTxt.trim()+" ";
+	            content += lineTxt + " ";
 	          } 
 			bufferedReader.close();
 			read.close();
@@ -91,7 +91,7 @@ public class RWFile {
 		File file = new File(filePath);
 		try{
 			//判断是否文件是否存在，如果有，则返回，如果没有，则创建文件。
-			createFile(file);
+			RWFile.createFile(file);
 			Writer out = new FileWriter(file);
 			out.write(content);
 			out.close();
@@ -105,7 +105,7 @@ public class RWFile {
 		File file = new File(filePath);
 		try{
 			//判断是否文件是否存在，如果有，则返回，如果没有，则创建文件。
-			createFile(file);
+			RWFile.createFile(file);
 			//新词是以"#"进行分割
 			String[] newWords = content.split("#");
 			
@@ -128,7 +128,7 @@ public class RWFile {
 		File file = new File(filePath);
 		try{
 			//判断是否文件是否存在，如果有，则返回，如果没有，则创建文件。
-			createFile(file);
+			RWFile.createFile(file);
 			//追加写入
 			Writer out = new FileWriter(file,true);
 			BufferedWriter bw = new BufferedWriter(out);

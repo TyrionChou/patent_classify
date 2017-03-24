@@ -15,13 +15,20 @@ public class ProcProcessor {
 	public static void main(String[] args){
 		procProcessInit("C:/program/GitHub/训练数据", "./source/userdict.txt","./source/stopwords.txt","./source/synonym.txt");
 		procProcess();
+		procProcessInit("C:/program/GitHub/测试数据", "./source/userdict.txt","./source/stopwords.txt","./source/synonym.txt");
+		procProcess();
 		System.out.println("Finish");
 	}
 	
 	//输入训练数据所在文件夹名称
-	final static String indirName = "训练数据";
-	//输出预处理数据所在文件夹名称
-	final static String outdirName = "预处理数据";
+	final static String inTrainDirName = "训练数据";
+	//输出训练处理数据所在文件夹名称
+	final static String outTrainDirName = "训练处理数据";
+	
+	//输入测试数据所在文件夹名称
+	final static String inTestDirName = "测试数据";
+	//输出测试处理数据所在文件夹名称
+	final static String outTestDirName = "测试处理数据";
 	
 	//输入训练数据的路径
 	static String dataDirPath = "";
@@ -49,7 +56,7 @@ public class ProcProcessor {
 		//初始化分词工具
 		NlpirSegment.instanceInit();
 		//用户词典初始化
-		userDictInit(userWordsDictPath);
+//		userDictInit(userWordsDictPath);
 		//停用词典初始化
 		WordsFilter.stopWordsFilterInit(stopWordsDictPath);
 //		WordsFilter.normailzeFilterInit(synonymDictPath);
@@ -131,8 +138,10 @@ public class ProcProcessor {
 		String[] path = filePath.split("/");
 		//将其中包含的“训练数据”字符串文件夹变换为“预处理数据文件夹”
 		for(int i = 0; i < path.length; i++){
-			if(path[i].equals(indirName)){
-				path[i]= outdirName;
+			if(path[i].equals(inTrainDirName)){
+				path[i]= outTrainDirName;
+			}else if(path[i].equals(inTestDirName)){
+				path[i]= outTestDirName;
 			}
 		}
 		//拼装预处理输出路径
