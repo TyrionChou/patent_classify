@@ -106,7 +106,7 @@ public class SelectFeatures {
 //			RWFile.writeLineMultipleContent(outFilePath, entropy.getWordName() + " " 
 //					+ entropy.getTotalOccurredNum() + " " +entropy.getIG());
 			//信息增益大于0.008的词输出
-			if(entropy.getIG() > 0.009){
+			if(entropy.getIG() > 0.008){
 				RWFile.writeLineMultipleContent(outFilePath, entropy.getWordName() + " " 
 						+ entropy.getTotalOccurredNum() + " " +entropy.getIG());
 			}
