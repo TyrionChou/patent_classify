@@ -40,8 +40,6 @@ public class TFIDF {
 		for(int i = 0; i < TFIDF.featuresNum; i++){
 			//初始化存放每篇文章特征词出现次数
 			tf.add((double)0);
-			//初始化在文本集中包含某个特征词的文本数
-			nt.add((double)0);
 			//初始化某个特征词TF/IDF归一化值的分子
 			tfIdfUp.add((double)0);
 			//初始化某个特征词TF/IDF归一化的值

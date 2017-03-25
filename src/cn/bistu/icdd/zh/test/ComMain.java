@@ -19,6 +19,5 @@ public interface ComMain {
 			e.printStackTrace();
 		}
 		System.out.println("结束运行!");
-		
 	}
 }

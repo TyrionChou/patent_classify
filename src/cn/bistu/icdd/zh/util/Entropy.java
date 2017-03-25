@@ -219,8 +219,11 @@ public class Entropy {
 			sum2 += wordNotOccurredCProbability.get(i)
 					* (Math.log(wordNotOccurredCProbability.get(i)) / Math.log(2)); 
 		}
+		
 		iG = Entropy.classentropy + wordOccurredProbability * sum1 
 				+ (1-wordOccurredProbability) * sum2;
+		
+		System.out.println(iG);
 		BigDecimal bd = new BigDecimal(iG);
 		iG = bd.setScale(8, BigDecimal.ROUND_HALF_UP).doubleValue(); 
 	}

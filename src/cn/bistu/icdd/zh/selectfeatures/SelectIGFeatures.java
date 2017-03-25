@@ -13,7 +13,7 @@ import cn.bistu.icdd.zh.util.Entropy;
 /**
  * 用来选取特征值
  */
-public class SelectFeatures {
+public class SelectIGFeatures {
 	
 	//输入待数据路径
 	final static String filePath = "C:/program/GitHub/训练处理数据";
@@ -24,7 +24,7 @@ public class SelectFeatures {
 	//分类的类别名称
 	final static String className = "A B C D E F G H";
 	//每一类的文章总数
-	final static double batchNum = 1000;
+	final static double batchNum = 1500;
 	
 	//记录每一篇文章中出现的词
 	static HashSet<String> word = new HashSet<String>();
@@ -101,10 +101,9 @@ public class SelectFeatures {
 			entropy.countWordOccurredCProbability();
 			//计算单词未出现后，每一个类发生的概率，保留四位小数
 			entropy.countWordNotOccurredCProbability();
+			
 			//计算信息增益值
 			entropy.countIG();
-//			RWFile.writeLineMultipleContent(outFilePath, entropy.getWordName() + " " 
-//					+ entropy.getTotalOccurredNum() + " " +entropy.getIG());
 			//信息增益大于0.008的词输出
 			if(entropy.getIG() > 0.008){
 				RWFile.writeLineMultipleContent(outFilePath, entropy.getWordName() + " " 
