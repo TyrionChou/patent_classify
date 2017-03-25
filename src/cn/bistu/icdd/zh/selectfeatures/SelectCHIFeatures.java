@@ -7,18 +7,15 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import cn.bistu.icdd.zh.util.CHI;
 import cn.bistu.icdd.zh.util.RWFile;
-import cn.bistu.icdd.zh.util.Entropy;
 
-/**
- * 用来选取特征值
- */
-public class SelectIGFeatures {
-	
+public class SelectCHIFeatures {
+
 	//输入待数据路径
 	final static String filePath = "C:/program/GitHub/训练处理数据";
 	//输出特征值路径
-	final static String outFilePath = "./source/igfeatures.txt";
+	final static String outFilePath = "./source/chifeatures.txt";
 	//分类的类别数
 	final static double classNum = 8;
 	//分类的类别名称
@@ -29,7 +26,8 @@ public class SelectIGFeatures {
 	//记录每一篇文章中出现的词
 	static HashSet<String> word = new HashSet<String>();
 	//记录每一个词的情况
-	static HashMap<String,Entropy> words = new HashMap<String,Entropy>();
+	static HashMap<String, CHI> words = new HashMap<String, CHI>();
+	
 	
 	public static void main(String[] args){
 		selectFeaturesInit();
@@ -38,24 +36,23 @@ public class SelectIGFeatures {
 		System.out.println("Finish");
 	}
 	
-	//Entropy类初始化一些静态参数
+	//CHI类初始化一些静态参数
 	public static void selectFeaturesInit(){
 		//设置分类的类别数
-		Entropy.setClassNum(classNum);
+		CHI.setClassNum(classNum);
 		//设置分类的类别名称
 		String[] classesName = className.split(" ");
-		for(int i = 0; i < Entropy.getClassNum(); i++){
-			Entropy.addClassName(i, classesName[i]);
+		for(int i = 0; i < CHI.getClassNum(); i++){
+			CHI.addClassName(i, classesName[i]);
 		}
 		//设置每一类的文章总数
-		for(int i = 0; i < Entropy.getClassNum(); i++){
-			Entropy.addBatchsNum(i, batchNum);
+		for(int i = 0; i < CHI.getClassNum(); i++){
+			CHI.addBatchsNum(i, batchNum);
 		}
 		//计算所有类文章实例总数
-		Entropy.countTotalNum();
-		//计算类别初始熵，保留四位小数
-		Entropy.countClassEntropy();
+		CHI.countTotalNum();
 	}
+	
 	//递归将所有文本中出现过的单词放入HashMap<String,Entropy> words中
 	public static void countWords(String filePath){
 		File file = new File(filePath);
@@ -67,9 +64,9 @@ public class SelectIGFeatures {
 			//循环判断是否words中含有单词，有，则跳过，没有，则加入words
 			for(int i = 0; i < wordsContent.length; i++){
 				if(!words.containsKey(wordsContent[i])){
-					Entropy entropy = new Entropy();
-					entropy.setWordName(wordsContent[i]);
-					words.put(wordsContent[i], entropy);
+					CHI chi = new CHI();
+					chi.setWordName(wordsContent[i]);
+					words.put(wordsContent[i], chi);
 				}
 			}
 		}else if(file.isDirectory()){
@@ -81,33 +78,35 @@ public class SelectIGFeatures {
 	}
 	
 	
-	//计算每个词的信息增益
+	//计算每个词的chi值
 	public static void selectFeatures(String filePath) {
 		//遍历所有文本，在文章中出现且在words中出现的词，在相应的类别文章数中加1
 		countWordFrequency(filePath);
 		//特征文件存在现将其删除
 		File file = new File(outFilePath);
 		file.delete();
-		//循环每个词计算信息增益
-		Iterator<Entry<String, Entropy>> iter = words.entrySet().iterator();
+		//循环每个词计算chi
+		Iterator<Entry<String, CHI>> iter = words.entrySet().iterator();
 		while (iter.hasNext()) {
-			Map.Entry<String, Entropy> entry = (Map.Entry<String, Entropy>) iter.next();
-			Entropy entropy = (Entropy) entry.getValue();
-			//计算单词出现总数
-			entropy.countTotalOccurredNum();
-			//计算单词出现的概率，保留四位小数
-			entropy.countWordOccurredProbability();
-			//计算单词出现后，每一个类发生的概率，保留四位小数
-			entropy.countWordOccurredCProbability();
-			//计算单词未出现后，每一个类发生的概率，保留四位小数
-			entropy.countWordNotOccurredCProbability();
-			
-			//计算信息增益值
-			entropy.countIG();
-			//信息增益大于0.008的词输出
-			if(entropy.getIG() > 0.008){
-				RWFile.writeLineMultipleContent(outFilePath, entropy.getWordName() + " " 
-						+ entropy.getTotalOccurredNum() + " " +entropy.getIG());
+			Map.Entry<String, CHI> entry = (Map.Entry<String, CHI>) iter.next();
+			CHI chi = (CHI) entry.getValue();
+			////计算单词出现在所有的文章总数
+			chi.countTotalOccurredNum();
+			//计算包含单词ti属于某一ci类中文本的频数
+			chi.countA();
+			//计算包含单词ti不属于某一ci类中文本的频数
+			chi.countB();
+			//计算不包含单词ti属于某一个ci类中文本的频数
+			chi.countC();
+			//计算不包含单词ti不属于某一ci类中文本的频数
+			chi.countD();
+			//计算ti对于每一个类的chi值
+			chi.countChi();
+			//计算ti单词ti最大的chi值
+			chi.countMaxChi();
+			if(chi.getMaxChi() > 100){
+				RWFile.writeLineMultipleContent(outFilePath, chi.getWordName() + " " 
+						+ chi.getTotalOccurredNum() + " " +chi.getMaxChi());
 			}
 		}
 	}
@@ -130,14 +129,14 @@ public class SelectIGFeatures {
 			//遍历每一个文本中出现的词，与words词表进行对比，如果有，则在words单词相应的类别文章数中加1
 			for(String str : word){	
 				if(words.containsKey(str)){
-					Entropy entropy = words.get(str);
-					for(int i = 0; i < Entropy.getClassName().size(); i++){
-						if(fileType.equals(Entropy.getClassName(i))){
-							entropy.setBatchOccurredNum(i, (entropy.getBatchOccurredNum(i) + 1));
+					CHI chi = words.get(str);
+					for(int i = 0; i < CHI.getClassName().size(); i++){
+						if(fileType.equals(CHI.getClassName(i))){
+							chi.setBatchOccurredNum(i, (chi.getBatchOccurredNum(i) + 1));
 							break;
 						}
 					}
-					words.put(str, entropy);
+					words.put(str, chi);
 				}
 			}
 		}else if(file.isDirectory()){

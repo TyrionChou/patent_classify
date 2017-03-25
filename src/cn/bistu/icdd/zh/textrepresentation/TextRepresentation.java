@@ -12,7 +12,7 @@ public class TextRepresentation {
 //	//特征词总数量
 //	final static double featuresNum = 731;	
 	//输入特征值路径
-	final static String featuresFilePath = "./source/features.txt";
+	final static String featuresFilePath = "./source/chifeatures.txt";
 	//输入训练数据的路径
 	final static String dataTrainDirPath = "C:/program/GitHub/训练处理数据";
 	final static String dataTestDirPath = "C:/program/GitHub/测试处理数据";

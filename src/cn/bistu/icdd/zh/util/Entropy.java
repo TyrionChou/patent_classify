@@ -41,7 +41,7 @@ public class Entropy {
 	//初始化函数
 	public Entropy(){
 		for(int i = 0; i < Entropy.classNum; i++){
-			//初始化单词每一类中出现的次数，利用拉普拉斯平滑的理论，将其每个类中出现的次数初始化为1
+			//初始化单词每一类中出现的次数，利用拉普拉斯平滑的理论，将其每个类中出现的次数初始化为1，防止OccurredCProbability=0
 			batchOccurredNum.add((double)1);
 			//初始化单词出现后，每一个类发生的概率
 			wordOccurredCProbability.add((double)0);
